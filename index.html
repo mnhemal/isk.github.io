@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prayer Times</title>
+  <link rel="stylesheet" href="./style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+
+<title>prayer time</title>
+</head>
+<body>
+
+ <center> <h1> Islamic Society of Kingsville (ISK) </h1> </center>
+
+<body>
+  <div class="column" style="background-color:#bbb;">
+
+    <canvas id="my_canvas" width="600" height="230"  ></canvas>
+    </div>
+
+<div class="row">
+  <div class="column" style="background-color:#aaa;">
+
+    <div>
+
+        <p id="time">1:20PM</p>
+        <p id="day">SUN</p>
+        <p id="date">9 May 2021</p>
+
+    </div>
+
+  </div>
+</div>
+
+<div class="container">
+  <center> <h1> Prayer Times in Kingsville, TX.</h1> </center>
+  <!-- City Name + Date -->
+  <div class="city-date">
+      <h1 class="city" id="city-name"></h1>
+      <h6 class="date" id="date"></h6>
+      <hr>
+      <div id="dateContainer">
+          <div id="currentDateTime"></div>
+          <div id="currentDate"><strong>Date:</strong><br></div>
+          <div id="hijriDate"><strong>Hijri:</strong><br></div>
+        </div>
+  </div>
+
+  <!-- Prayer Time -->
+  <div class="azan-container" id="">
+      <div class="azan-card" id="title">
+          <div class="azan-name">Salah</div>
+          <div class="azan-time" id="title">Azan</div>
+          <div class="iqama-time" id="title">Iqama</div>
+      </div>
+      <div class="azan-card" id="fajr-card">
+          <div class="azan-name">Fajr</div>
+          <div class="azan-time" id="fajr"></div>
+          <div class="iqama-time" id="fajr-iqama"></div>
+      </div>
+      <div class="azan-card" id="dhuhr-card">
+          <div class="azan-name">Dhuhr</div>
+          <div class="azan-time" id="dhuhr"></div>
+          <div class="iqama-time" id="dhuhr-iqama">2:00 PM</div>
+      </div>
+      <div class="azan-card" id="asr-card">
+          <div class="azan-name">Asr</div>
+          <div class="azan-time" id="asr"></div>
+          <div class="iqama-time" id="asr-iqama"></div>
+      </div>
+      <div class="azan-card" id="maghrib-card">
+          <div class="azan-name">Maghrib</div>
+          <div class="azan-time" id="maghrib"></div>
+          <div class="iqama-time" id="maghrib-iqama"></div>
+      </div>
+      <div class="azan-card" id="isha-card">
+          <div class="azan-name">Isha</div>
+          <div class="azan-time" id="isha"></div>
+          <div class="iqama-time" id="isha-iqama"></div>
+      </div>
+      <div class="azan-card" id="isha-card">
+          <div class="azan-name">Jumaa</div>
+          <div class="azan-time" id="isha">2:00 pm</div>
+          <div class="iqama-time" id="isha-iqama">2:00 pm</div>
+      </div>
+  </div>
+</div>
+
+
+	
+  <script src="script.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+      jQuery(function($) {
+          $.getJSON('https://muslimsalat.com/kingsville.json?key=API_KEY&jsoncallback=?', function (times) {
+              var prayerTimes = times.items[0];
+
+              $('#fajr').text(prayerTimes.fajr);
+              $('#dhuhr').text(prayerTimes.dhuhr);
+              $('#asr').text(prayerTimes.asr);
+              $('#maghrib').text(prayerTimes.maghrib);
+              $('#isha').text(prayerTimes.isha);
+
+              // Calculate Iqama times (azan-time + 5 minutes)
+              $('#fajr-iqama').text(addMinutes(prayerTimes.fajr, 20));
+              $('#dhuhr-iqama').text(addMinutes(prayerTimes.dhuhr, 5));
+              $('#asr-iqama').text(addMinutes(prayerTimes.asr, 5));
+              $('#maghrib-iqama').text(addMinutes(prayerTimes.maghrib, 5));
+              $('#isha-iqama').text(addMinutes(prayerTimes.isha, 5));
+          });
+
+          function addMinutes(time, minutes) {
+  if (!time) return 'Invalid time';
+
+  // Split time into hours, minutes, and AM/PM
+  var timeParts = time.split(' ');
+  if (timeParts.length !== 2) {
+      return 'Invalid time';
+  }
+
+  var hoursMins = timeParts[0].split(':');
+  var hours = parseInt(hoursMins[0]);
+  var mins = parseInt(hoursMins[1]);
+  var period = timeParts[1];
+
+  if (isNaN(hours) || isNaN(mins)) {
+      return 'Invalid time';
+  }
+
+  // Convert to 24-hour format for calculations
+  if (period.toLowerCase() === 'pm' && hours < 12) {
+      hours += 12;
+  }
+
+  var totalMinutes = hours * 60 + mins + minutes;
+  var newHours = Math.floor(totalMinutes / 60) % 24;
+  var newMins = totalMinutes % 60;
+
+  // Convert back to AM/PM format
+  var periodNew = newHours >= 12 ? 'pm' : 'am';
+  newHours = newHours % 12 || 12;
+
+  return (newHours < 10 ? '' : '') + newHours + ':' + (newMins < 10 ? '' : '') + newMins + ' ' + periodNew;
+}
+
+
+          // function addMinutes(time, minutes) {
+          //     if (!time) return 'Invalid time';
+
+          //     var timeParts = time.split(':');
+          //     if (timeParts.length !== 2) {
+          //         return 'Invalid time';
+          //     }
+
+          //     var hours = parseInt(timeParts[0]);
+          //     var mins = parseInt(timeParts[1]);
+
+          //     if (isNaN(hours) || isNaN(mins)) {
+          //         return 'Invalid time';
+          //     }
+
+          //     var totalMinutes = hours * 60 + mins + minutes;
+          //     var newHours = Math.floor(totalMinutes / 60);
+          //     var newMins = totalMinutes % 60;
+
+          //     return (newHours < 10 ? '0' : '') + newHours + ':' + (newMins < 10 ? '0' : '') + newMins;
+          // }
+      });
+
+      function getCurrentTime() {
+const now = new Date();
+const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+return now.toLocaleTimeString('en-US', options);
+}
+
+function getCurrentDate() {
+const today = new Date();
+const options = { year: 'numeric', month: 'long', day: 'numeric' };
+return today.toLocaleDateString('en-US', options);
+}
+
+function getHijriDate() {
+const hijriMonths = [
+  "Muharram", "Safar", "Rabi ul Awal", "Rabi ul Thani",
+  "Jumada al-Ula", "Jumada al-Akhirah", "Rajab", "Sha'ban",
+  "Ramadan", "Shawwal", "Dhu al-Qa'dah", "Dhu al-Hijjah"
+];
+
+const today = new Date();
+const hijriCalendar = Intl.DateTimeFormat('en-US-u-ca-islamic', {
+  timeZone: 'America/Chicago',
+  day: 'numeric',
+  month: 'numeric',
+  year: 'numeric'
+}).formatToParts(today);
+
+const day = hijriCalendar.find(part => part.type === 'day').value;
+const month = hijriMonths[hijriCalendar.find(part => part.type === 'month').value - 1];
+const year = hijriCalendar.find(part => part.type === 'year').value;
+
+return `${day} ${month}, ${year}`;
+}
+
+function updateDateTime() {
+const currentDateTime = new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' });
+const currentDate = getCurrentDate();
+const hijriDate = getHijriDate();
+
+document.getElementById('currentDateTime').innerHTML = `<strong>Current Time:</strong> ${getCurrentTime()}`;
+document.getElementById('currentDate').innerHTML = `<strong>Date:</strong> ${currentDate}`;
+document.getElementById('hijriDate').innerHTML = `<strong>Hijri Date:</strong> ${hijriDate}`;
+}
+
+// Update the date and time every second
+setInterval(updateDateTime, 1000);
+
+// Initial call to display the date and time
+updateDateTime();
+  </script>
+</body>
+</html>
