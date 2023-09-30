@@ -4,7 +4,7 @@
         margin: 5px;
     }
 
-    #time{
+    #time {
         font-size: 60px;
         color: #004AAD;
     }
@@ -14,7 +14,7 @@
         color: #FF5757;
     }
 
-    #date{
+    #date,#date1, #hijriDate{ 
         font-size:20px;
         color: #FF5757;
     }
@@ -100,6 +100,11 @@ body {
   color: #333;
 }
 
+#currentDateTime, #currentDate {
+  font-weight: 0;
+  font-size: 0;
+
+}
 .city {
   font-weight: 400;
   font-size: 28px;
